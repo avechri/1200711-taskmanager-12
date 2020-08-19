@@ -1,6 +1,3 @@
-import {boardElement} from "./board";
-import {render} from "../main";
-
 const createLoadMoreButtonTemplate = () => {
   return (
     `
@@ -8,7 +5,5 @@ const createLoadMoreButtonTemplate = () => {
     `
   );
 };
-
-render(boardElement, createLoadMoreButtonTemplate(), `beforeend`);
 
 export {createLoadMoreButtonTemplate};

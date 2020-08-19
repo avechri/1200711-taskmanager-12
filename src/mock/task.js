@@ -1,10 +1,6 @@
+import {COLORS} from "../const";
+import {getRandomInteger} from "../utils";
 // ниже задание по 3 модулю
-
-const getRandomInteger = function (min, max) {
-  min = Math.ceil(min);
-  max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-};
 
 const descriptions = [`Изучить теорию`, `Сделать домашку`, `Пройти интенсив на соточку`];
 
@@ -42,14 +38,13 @@ const generateRepeating = () => {
 };
 
 const getRandomColor = () => {
-  const colors = [`black`, `yellow`, `blue`, `green`, `pink`];
-  const randomIndex = getRandomInteger(0, colors.length - 1);
+  const randomIndex = getRandomInteger(0, COLORS.length - 1);
 
-  return colors[randomIndex];
+  return COLORS[randomIndex];
 };
 
 // ниже описана структура данных, 3.1
-export const generateTask = () => {
+const generateTask = () => {
   const dueDate = generateDate();
   const repeating = dueDate === null
     ? generateRepeating()
@@ -71,3 +66,5 @@ export const generateTask = () => {
     isArchive: Boolean(getRandomInteger(0, 1)),
   };
 };
+
+export {generateTask};

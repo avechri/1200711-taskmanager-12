@@ -1,10 +1,4 @@
-import {render} from "../main";
-import {siteMainElement} from "./site-menu";
-
-const boardElement = siteMainElement.querySelector(`.board`);
-const taskListElement = boardElement.querySelector(`.board__tasks`);
-
-const createBordTemplate = () => {
+export const createBoardTemplate = () => {
   return (
     `    <section class="board container">
         <div class="board__filter-list">
@@ -17,7 +11,3 @@ const createBordTemplate = () => {
        </section>`
   );
 };
-
-render(siteMainElement, createBordTemplate(), `beforeend`);
-
-export {createBordTemplate, boardElement, taskListElement};
