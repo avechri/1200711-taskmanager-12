@@ -1,9 +1,4 @@
-import {render} from "../main";
-
-const siteMainElement = document.querySelector(`.main`);
-const siteHeaderElement = siteMainElement.querySelector(`.main__control`);
-
-const createSiteMenuTemplate = () => {
+export const createSiteMenuTemplate = () => {
   return (
     `        <section class="control__btn-wrap">
           <input
@@ -35,7 +30,3 @@ const createSiteMenuTemplate = () => {
         </section>`
   );
 };
-
-render(siteHeaderElement, createSiteMenuTemplate(), `beforeend`);
-
-export {createSiteMenuTemplate, siteMainElement};
