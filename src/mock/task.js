@@ -22,6 +22,7 @@ const generateDate = () => {
 
   return new Date(currentDate);
 };
+
 const generateDescription = () => descriptions[getRandomInteger(0, descriptions.length - 1)];
 
 // ниже функция для генерации дней повторения
