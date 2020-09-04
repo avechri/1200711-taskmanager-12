@@ -4,8 +4,7 @@ import {createElement} from "../utils.js";
 // однако делать мы этого не будем, чтобы не раздувать diff изменений
 
 const createSiteMenuTemplate = () => {
-  return (
-    `        <section class="control__btn-wrap">
+  return `<section class="control__btn-wrap">
           <input
             type="radio"
             name="control"
@@ -32,8 +31,7 @@ const createSiteMenuTemplate = () => {
           <label for="control__statistic" class="control__label"
             >STATISTICS</label
           >
-        </section>`
-  );
+        </section>`;
 };
 
 export default class SiteMenu {
@@ -41,13 +39,13 @@ export default class SiteMenu {
     this._element = null;
   }
 
-  getTemplate() {
+  _getTemplate() {
     return createSiteMenuTemplate();
   }
 
   getElement() {
     if (!this._element) {
-      this._element = createElement(this.getTemplate());
+      this._element = createElement(this._getTemplate());
     }
 
     return this._element;
