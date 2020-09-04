@@ -1,18 +1,17 @@
-import {createSiteMenuTemplate} from "./view/site-menu";
-import {createFilterItemTemplate, createFilterTemplate} from "./view/filter";
+import SiteMenuView from "./view/site-menu.js";
+import {createFilterTemplate} from "./view/filter";
 import {createBoardTemplate} from "./view/board";
 import {createTaskTemplate} from "./view/task";
 import {createTaskEditTemplate} from "./view/task-edit";
 import {createLoadMoreButtonTemplate} from "./view/load-more-button";
 import {generateTask} from "./mock/task";
 import {generateFilter} from "./mock/filter.js";
+import {renderTemplate, renderElement, RenderPosition} from "./utils";
 
 const TASKS_COUNT = 22;
 const TASK_COUNT_PER_STEP = 8;
 
-const render = (container, template, place) => {
-  container.insertAdjacentHTML(place, template);
-};
+
 
 const tasks = new Array(TASKS_COUNT).fill().map(generateTask);
 const filters = generateFilter(tasks);
@@ -20,23 +19,23 @@ const filters = generateFilter(tasks);
 const siteMainElement = document.querySelector(`.main`);
 const siteHeaderElement = siteMainElement.querySelector(`.main__control`);
 
-render(siteHeaderElement, createSiteMenuTemplate(), `beforeend`);
-render(siteMainElement, createFilterTemplate(filters), `beforeend`);
-render(siteMainElement, createBoardTemplate(), `beforeend`);
+renderElement(siteHeaderElement, new SiteMenuView().getElement(), RenderPosition.BEFOREEND);
+renderTemplate(siteMainElement, createFilterTemplate(filters), `beforeend`);
+renderTemplate(siteMainElement, createBoardTemplate(), `beforeend`);
 
 const boardElement = siteMainElement.querySelector(`.board`);
 const taskListElement = boardElement.querySelector(`.board__tasks`);
 
-render(siteHeaderElement, createSiteMenuTemplate(), `beforeend`);
-render(taskListElement, createTaskEditTemplate(tasks[0]), `beforeend`);
+renderTemplate(siteHeaderElement, createSiteMenuTemplate(), `beforeend`);
+renderTemplate(taskListElement, createTaskEditTemplate(tasks[0]), `beforeend`);
 
 for (let i = 1; i < Math.min(tasks.length, TASK_COUNT_PER_STEP); i++) {
-  render(taskListElement, createTaskTemplate(tasks[i]), `beforeend`);
+  renderTemplate(taskListElement, createTaskTemplate(tasks[i]), `beforeend`);
 }
 
 if (tasks.length > TASK_COUNT_PER_STEP) {
   let renderedTaskCount = TASK_COUNT_PER_STEP;
-  render(boardElement, createLoadMoreButtonTemplate(), `beforeend`);
+  renderTemplate(boardElement, createLoadMoreButtonTemplate(), `beforeend`);
 
   const loadMoreButton = boardElement.querySelector(`.load-more`);
 

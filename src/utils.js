@@ -1,17 +1,52 @@
-const getRandomInteger = function (min, max) {
+export const RenderPosition = {
+  AFTERBEGIN: `afterbegin`,
+  BEFOREEND: `beforeend`
+};
+
+export const renderElement = (container, element, place) => {
+  switch (place) {
+    case RenderPosition.AFTERBEGIN:
+      container.prepend(element);
+      break;
+    case RenderPosition.BEFOREEND:
+      container.append(element);
+      break;
+  }
+};
+
+export const renderTemplate = (container, template, place) => {
+  container.insertAdjacentHTML(place, template);
+};
+
+// Принцип работы прост:
+// 1. создаём пустой div-блок
+// 2. берём HTML в виде строки и вкладываем в этот div-блок, превращая в DOM-элемент
+// 3. возвращаем этот DOM-элемент
+
+export const createElement = (template) => {
+  const newElement = document.createElement(`div`); // 1
+  newElement.innerHTML = template; // 2
+
+  return newElement.firstChild; // 3
+};
+// Единственный нюанс, что HTML в строке должен иметь общую обёртку,
+// то есть быть чем-то вроде <nav><a>Link 1</a><a>Link 2</a></nav>,
+// а не просто <a>Link 1</a><a>Link 2</a>
+
+export const getRandomInteger = function (min, max) {
   min = Math.ceil(min);
   max = Math.floor(max);
   return Math.floor(Math.random() * (max - min + 1)) + min;
 };
 
-const getCurrentDate = () => {
+export const getCurrentDate = () => {
   const currentDate = new Date();
   currentDate.setHours(23, 59, 59, 999);
 
   return new Date(currentDate);
 };
 
-const isTaskExpired = (dueDate) => {
+export const isTaskExpired = (dueDate) => {
   if (dueDate === null) {
     return false;
   }
@@ -21,7 +56,7 @@ const isTaskExpired = (dueDate) => {
   return currentDate.getTime() > dueDate.getTime();
 };
 
-const isTaskExpiringToday = (dueDate) => {
+export const isTaskExpiringToday = (dueDate) => {
   if (dueDate === null) {
     return false;
   }
@@ -31,12 +66,11 @@ const isTaskExpiringToday = (dueDate) => {
   return currentDate.getTime() === dueDate.getTime();
 };
 
-const isTaskRepeating = (repeating) => {
+export const isTaskRepeating = (repeating) => {
   return Object.values(repeating).some(Boolean);
 };
 
-const humanizeTaskDueDate = (dueDate) => {
+export const humanizeTaskDueDate = (dueDate) => {
   return dueDate.toLocaleString(`en-US`, {day: `numeric`, month: `long`});
 };
 
-export {getRandomInteger, isTaskExpired, isTaskRepeating, humanizeTaskDueDate, isTaskExpiringToday};
