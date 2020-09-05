@@ -39,10 +39,6 @@ export default class SiteMenu {
     this._element = null;
   }
 
-  _getTemplate() {
-    return createSiteMenuTemplate();
-  }
-
   getElement() {
     if (!this._element) {
       this._element = createElement(this._getTemplate());
@@ -53,5 +49,9 @@ export default class SiteMenu {
 
   removeElement() {
     this._element = null;
+  }
+
+  _getTemplate() {
+    return createSiteMenuTemplate();
   }
 }

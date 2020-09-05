@@ -20,7 +20,7 @@ const siteMainElement = document.querySelector(`.main`);
 const siteHeaderElement = siteMainElement.querySelector(`.main__control`);
 
 renderElement(siteHeaderElement, new SiteMenuView().getElement(), RenderPosition.BEFOREEND);
-renderTemplate(siteMainElement, createFilterTemplate(filters), `beforeend`);
+renderTemplate(siteMainElement, createFilterTemplate(filters), RenderPosition.BEFOREEND);
 
 const boardComponent = new BoardView();
 
@@ -33,7 +33,7 @@ renderElement(boardComponent.getElement(), taskListComponent.getElement(), Rende
 renderTemplate(taskListComponent.getElement(), createTaskEditTemplate(tasks[0]), RenderPosition.BEFOREEND);
 
 for (let i = 1; i < Math.min(tasks.length, TASK_COUNT_PER_STEP); i++) {
-  renderTemplate(taskListComponent.getElement(), createTaskTemplate(tasks[i]), `beforeend`);
+  renderTemplate(taskListComponent.getElement(), createTaskTemplate(tasks[i]), RenderPosition.BEFOREEND);
 }
 
 if (tasks.length > TASK_COUNT_PER_STEP) {
@@ -46,7 +46,7 @@ if (tasks.length > TASK_COUNT_PER_STEP) {
     evt.preventDefault();
     tasks
       .slice(renderedTaskCount, renderedTaskCount + TASK_COUNT_PER_STEP)
-      .forEach((task) => renderTemplate(taskListComponent.getElement(), createTaskTemplate(task), `beforeend`));
+      .forEach((task) => renderTemplate(taskListComponent.getElement(), createTaskTemplate(task), RenderPosition.BEFOREEND));
 
     renderedTaskCount += TASK_COUNT_PER_STEP;
 
