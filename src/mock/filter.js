@@ -17,6 +17,11 @@ const taskToFilterMap = {
   archive: (tasks) => tasks.filter((task) => task.isArchive).length,
 };
 
+
+// // eslint-disable-next-line valid-jsdoc
+// /**
+//  @return {name: String, count: Integer}[]
+//  */
 const generateFilter = (tasks) => {
   return Object.entries(taskToFilterMap).map(([filterName, countTasks]) => {
     return {
