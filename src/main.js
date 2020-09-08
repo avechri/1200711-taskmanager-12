@@ -5,6 +5,7 @@ import SortView from "./view/sort.js";
 import TaskListView from "./view/task-list.js";
 import FilterView from "./view/filter.js";
 import TaskView from "./view/task.js";
+import NoTasksView from "./view/no-tasks.js";
 import TaskEditView from "./view/task-edit.js";
 import {generateTask} from "./mock/task";
 import {generateFilter} from "./mock/filter.js";
@@ -33,13 +34,23 @@ const renderTask = (taskListElement, task) => {
     taskListElement.replaceChild(taskComponent.getElement(), taskEditComponent.getElement());
   };
 
+  const onEscKeyDown = (evt) => {
+    if (evt.key === `Escape` || evt.key === `Esc`) {
+      evt.preventDefault();
+      replaceFormToCard();
+      document.removeEventListener(`keydown`, onEscKeyDown);
+    }
+  };
+
   taskComponent.getElement().querySelector(`.card__btn--edit`).addEventListener(`click`, () => {
     replaceCardToForm();
+    document.addEventListener(`keydown`, onEscKeyDown);
   });
 
   taskEditComponent.getElement().querySelector(`form`).addEventListener(`submit`, (evt) => {
     evt.preventDefault();
     replaceFormToCard();
+    document.removeEventListener(`keydown`, onEscKeyDown);
   });
 };
 
@@ -49,10 +60,22 @@ render(siteMainElement, new FilterView(filters).getElement(), RenderPosition.BEF
 const boardComponent = new BoardView();
 
 render(siteMainElement, boardComponent.getElement(), RenderPosition.BEFOREEND);
-render(boardComponent.getElement(), new SortView().getElement(), RenderPosition.AFTERBEGIN);
+
+// По условию заглушка должна показываться,
+// когда нет задач или все задачи в архиве.
+// Мы могли бы написать:
+// tasks.length === 0 || tasks.every((task) => task.isArchive)
+// Но благодаря тому, что на пустом массиве every вернёт true,
+// мы можем опустить "tasks.length === 0".
+// p.s. А метод some на пустом массиве наборот вернет false
+
+if (tasks.every((task) => task.isArchive)) {
+  render(boardComponent.getElement(), new NoTasksView().getElement(), RenderPosition.BEFOREEND);
+} else {
+  render(boardComponent.getElement(), new SortView().getElement(), RenderPosition.BEFOREEND);
+}
 
 const taskListComponent = new TaskListView();
-
 render(boardComponent.getElement(), taskListComponent.getElement(), RenderPosition.BEFOREEND);
 
 for (let i = 0; i < Math.min(tasks.length, TASK_COUNT_PER_STEP); i++) {
@@ -61,8 +84,8 @@ for (let i = 0; i < Math.min(tasks.length, TASK_COUNT_PER_STEP); i++) {
 
 if (tasks.length > TASK_COUNT_PER_STEP) {
   let renderedTaskCount = TASK_COUNT_PER_STEP;
-  const loadMoreButtonComponent = new LoadMoreButtonView();
 
+  const loadMoreButtonComponent = new LoadMoreButtonView();
   render(boardComponent.getElement(), loadMoreButtonComponent.getElement(), RenderPosition.BEFOREEND);
 
   loadMoreButtonComponent.getElement().addEventListener(`click`, (evt) => {
