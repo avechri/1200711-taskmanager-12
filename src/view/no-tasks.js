@@ -6,7 +6,7 @@ const createNoTasksTemplate = () => {
   </p>`;
 };
 
-export default class NoTasks extends AbstractView {
+export default class NoTasksView extends AbstractView {
   getTemplate() {
     return createNoTasksTemplate();
   }
