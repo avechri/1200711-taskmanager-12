@@ -1,5 +1,5 @@
 import {COLORS} from "../const";
-import {getRandomInteger} from "../utils";
+import {getRandomInteger} from "../utils/common";
 // ниже задание по 3 модулю
 
 const descriptions = [`Изучить теорию`, `Сделать домашку`, `Пройти интенсив на соточку`];
