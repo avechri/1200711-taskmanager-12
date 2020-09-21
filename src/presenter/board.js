@@ -1,7 +1,7 @@
 import BoardView from "../view/board.js";
 import SortView from "../view/sort.js";
 import TaskListView from "../view/task-list.js";
-import NoTaskView from "../view/no-tasks.js";
+import NoTasksView from "../view/no-tasks.js";
 import TaskView from "../view/task.js";
 import TaskEditView from "../view/task-edit.js";
 import LoadMoreButtonView from "../view/load-more-button.js";
@@ -20,7 +20,7 @@ export default class Board {
     this._boardComponent = new BoardView();
     this._sortComponent = new SortView();
     this._taskListComponent = new TaskListView();
-    this._noTaskComponent = new NoTaskView();
+    this._noTaskComponent = new NoTasksView();
     this._loadMoreButtonComponent = new LoadMoreButtonView();
 
     this._handleLoadMoreButtonClick = this._handleLoadMoreButtonClick.bind(this);
@@ -63,26 +63,6 @@ export default class Board {
     this._currentSortType = sortType;
   }
 
-  _sortTasks(sortType) {
-    // 2. Этот исходный массив задач необходим,
-    // потому что для сортировки мы будем мутировать
-    // массив в свойстве _boardTasks
-    switch (sortType) {
-      case SortType.DATE_UP:
-        this._boardTasks.sort(sortTaskUp);
-        break;
-      case SortType.DATE_DOWN:
-        this._boardTasks.sort(sortTaskDown);
-        break;
-      default:
-        // 3. А когда пользователь захочет "вернуть всё, как было",
-        // мы просто запишем в _boardTasks исходный массив
-        this._boardTasks = this._sourcedBoardTasks.slice();
-    }
-
-    this._currentSortType = sortType;
-  }
-
   _handleSortTypeChange(sortType) {
     // - Сортируем задачи
     if (this._currentSortType === sortType) {
@@ -92,6 +72,8 @@ export default class Board {
     this._sortTasks(sortType);
     // - Очищаем список
     // - Рендерим список заново
+    this._clearTaskList();
+    this._renderTaskList();
   }
 
   _renderSort() {
@@ -154,6 +136,11 @@ export default class Board {
     render(this._boardComponent, this._loadMoreButtonComponent, RenderPosition.BEFOREEND);
 
     this._loadMoreButtonComponent.setClickHandler(this._handleLoadMoreButtonClick);
+  }
+
+  _clearTaskList() {
+    this._taskListComponent.getElement().innerHTML = ``;
+    this._renderedTaskCount = TASK_COUNT_PER_STEP;
   }
 
   _renderTaskList() {
