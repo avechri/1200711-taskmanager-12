@@ -1,4 +1,4 @@
-import {createElement} from "../utils.js";
+import AbstractView from "./abstract";
 
 const createBoardTemplate = () => {
   return `<section class="board container"></section>`;
@@ -15,24 +15,8 @@ const createBoardTemplate = () => {
   //      </section>`
   // );
 
-export default class Board {
-  constructor() {
-    this._element = null;
-  }
-
+export default class Board extends AbstractView {
   getTemplate() {
     return createBoardTemplate();
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
