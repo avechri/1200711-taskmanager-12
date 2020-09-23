@@ -1,6 +1,6 @@
 import {COLORS} from "../const";
 import {isTaskExpired, isTaskRepeating, humanizeTaskDueDate} from "../utils/task.js";
-import AbstractView from "./abstract";
+import SmartView from "./smart.js";
 
 const BLANK_TASK = {
   color: COLORS[0],
@@ -139,7 +139,7 @@ const createTaskEditTemplate = (data = {}) => {
   );
 };
 
-export default class TaskEdit extends AbstractView {
+export default class TaskEdit extends SmartView {
   constructor(task = BLANK_TASK) {
     super();
     this._data = TaskEdit.parseTaskToData(task);
@@ -158,44 +158,6 @@ export default class TaskEdit extends AbstractView {
     return createTaskEditTemplate(this._data);
   }
   // обновляет данные
-  // updateData обновляет разметку
-  updateData(update, justUpdateData) {
-    if (!update) {
-      return;
-    }
-
-    this._data = Object.assign(
-        {},
-        this._data,
-        update
-    );
-
-    if (justUpdateData) {
-      return;
-    }
-
-    this.updateElement();
-  }
-
-  // обновляет шаблон
-  updateElement() {
-    let prevElement = this.getElement();
-    const parent = prevElement.parentElement;
-    this.removeElement();
-
-    const newElement = this.getElement();
-
-    parent.replaceChild(newElement, prevElement);
-    prevElement = null; // Чтобы окончательно "убить" ссылку на prevElement
-
-    this.restoreHandlers();
-  }
-
-  restoreHandlers() {
-    this._setInnerHandlers();
-    this.setFormSubmitHandler(this._callback.formSubmit);
-  }
-
   _setInnerHandlers() {
     this.getElement()
       .querySelector(`.card__date-deadline-toggle`)
