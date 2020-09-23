@@ -4,12 +4,12 @@ export const getRandomInteger = function (min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 };
 
-/**
- * @param items - массив
- * @param update - объект, который хотим заменить
- * @returns {*[]|*} - возвращает массив из части до найденного элемента + апдейт + после найденного элемента
- */
 
+/**
+ * @param {Array} items
+ * @param {Object} update объект, который хотим заменить
+ * @return {Array} массив из части до найденного элемента + апдейт + после найденного элемента
+ */
 export const updateItem = (items, update) => {
   const index = items.findIndex((item) => item.id === update.id);
 
