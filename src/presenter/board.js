@@ -18,15 +18,14 @@ export default class Board {
     this._currentSortType = SortType.DEFAULT;
     this._taskPresenter = {};
 
-    this._handleTaskChange = this._handleTaskChange.bind();
     this._boardComponent = new BoardView();
     this._sortComponent = new SortView();
     this._taskListComponent = new TaskListView();
     this._noTaskComponent = new NoTasksView();
     this._loadMoreButtonComponent = new LoadMoreButtonView();
 
+    this._handleTaskChange = this._handleTaskChange.bind(this);
     this._handleLoadMoreButtonClick = this._handleLoadMoreButtonClick.bind(this);
-
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
   }
 
