@@ -3,6 +3,10 @@ import TaskEditView from "../view/task-edit.js";
 import {remove, render, RenderPosition, replace} from "../utils/render.js";
 
 export default class Task {
+  /**
+   * @param {TaskList} taskListContainer
+   * @param {Object} changeData это данные, которые нужно обновить (= _handleTaskChange, обновляет моки)
+   */
   constructor(taskListContainer, changeData) {
     this._taskListContainer = taskListContainer;
     this._changeData = changeData;

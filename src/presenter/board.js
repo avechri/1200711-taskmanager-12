@@ -45,6 +45,9 @@ export default class Board {
     this._renderBoard();
   }
 
+  /**
+   * @param {Object} updatedTask это элемент мока, который нужно обновить
+   */
   _handleTaskChange(updatedTask) {
     this._boardTasks = updateItem(this._boardTasks, updatedTask);
     this._sourcedBoardTasks = updateItem(this._sourcedBoardTasks, updatedTask);
@@ -91,7 +94,7 @@ export default class Board {
   }
 
   _renderTask(task) {
-    const taskPresenter = new TaskPresenter(this._taskListComponent);
+    const taskPresenter = new TaskPresenter(this._taskListComponent, this._handleTaskChange);
     taskPresenter.init(task);
     this._taskPresenter[task.id] = taskPresenter;
   }
