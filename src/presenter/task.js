@@ -1,6 +1,6 @@
 import TaskView from "../view/task.js";
 import TaskEditView from "../view/task-edit.js";
-import {remove, render, RenderPosition, replace} from "../utils/render.js";
+import {render, RenderPosition, replace, remove} from "../utils/render.js";
 
 const Mode = {
   DEFAULT: `DEFAULT`,
@@ -8,11 +8,6 @@ const Mode = {
 };
 
 export default class Task {
-  /**
-   * @param {TaskList} taskListContainer
-   * @param {Object} changeData это данные, которые нужно обновить (= _handleTaskChange, обновляет моки)
-   * @param {Board._handleModeChange} changeMode Object
-   */
   constructor(taskListContainer, changeData, changeMode) {
     this._taskListContainer = taskListContainer;
     this._changeData = changeData;
@@ -38,13 +33,14 @@ export default class Task {
     this._taskComponent = new TaskView(task);
     this._taskEditComponent = new TaskEditView(task);
 
+    this._taskComponent.setEditClickHandler(this._handleEditClick);
     this._taskComponent.setFavoriteClickHandler(this._handleFavoriteClick);
     this._taskComponent.setArchiveClickHandler(this._handleArchiveClick);
-    this._taskComponent.setEditClickHandler(this._handleEditClick);
     this._taskEditComponent.setFormSubmitHandler(this._handleFormSubmit);
 
-    if (this._taskComponent === null || this._taskEditComponent === null) {
+    if (prevTaskComponent === null || prevTaskEditComponent === null) {
       render(this._taskListContainer, this._taskComponent, RenderPosition.BEFOREEND);
+      return;
     }
 
     if (this._mode === Mode.DEFAULT) {
@@ -55,8 +51,8 @@ export default class Task {
       replace(this._taskEditComponent, prevTaskEditComponent);
     }
 
-    remove(this._taskComponent);
-    remove(this._taskEditComponent);
+    remove(prevTaskComponent);
+    remove(prevTaskEditComponent);
   }
 
   destroy() {
@@ -70,7 +66,6 @@ export default class Task {
     }
   }
 
-
   _replaceCardToForm() {
     replace(this._taskEditComponent, this._taskComponent);
     document.addEventListener(`keydown`, this._escKeyDownHandler);
@@ -81,6 +76,7 @@ export default class Task {
   _replaceFormToCard() {
     replace(this._taskComponent, this._taskEditComponent);
     document.removeEventListener(`keydown`, this._escKeyDownHandler);
+    this._mode = Mode.DEFAULT;
   }
 
   _escKeyDownHandler(evt) {
@@ -88,7 +84,6 @@ export default class Task {
       evt.preventDefault();
       this._taskEditComponent.reset(this._task);
       this._replaceFormToCard();
-      this._mode = Mode.DEFAULT;
     }
   }
 

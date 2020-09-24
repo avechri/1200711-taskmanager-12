@@ -1,13 +1,13 @@
 import BoardView from "../view/board.js";
 import SortView from "../view/sort.js";
 import TaskListView from "../view/task-list.js";
-import NoTasksView from "../view/no-tasks.js";
+import NoTaskView from "../view/no-tasks.js";
 import LoadMoreButtonView from "../view/load-more-button.js";
-import {updateItem} from "../utils/common";
+import TaskPresenter from "./task.js";
+import {updateItem} from "../utils/common.js";
 import {render, RenderPosition, remove} from "../utils/render.js";
 import {sortTaskUp, sortTaskDown} from "../utils/task.js";
 import {SortType} from "../const.js";
-import TaskPresenter from "./task.js";
 
 const TASK_COUNT_PER_STEP = 8;
 
@@ -21,7 +21,7 @@ export default class Board {
     this._boardComponent = new BoardView();
     this._sortComponent = new SortView();
     this._taskListComponent = new TaskListView();
-    this._noTaskComponent = new NoTasksView();
+    this._noTaskComponent = new NoTaskView();
     this._loadMoreButtonComponent = new LoadMoreButtonView();
 
     this._handleTaskChange = this._handleTaskChange.bind(this);
@@ -32,12 +32,10 @@ export default class Board {
 
   init(boardTasks) {
     this._boardTasks = boardTasks.slice();
-
     // 1. В отличии от сортировки по любому параметру,
     // исходный порядок можно сохранить только одним способом -
     // сохранив исходный массив:
     this._sourcedBoardTasks = boardTasks.slice();
-
 
     render(this._boardContainer, this._boardComponent, RenderPosition.BEFOREEND);
     render(this._boardComponent, this._taskListComponent, RenderPosition.BEFOREEND);
@@ -51,9 +49,6 @@ export default class Board {
       .forEach((presenter) => presenter.resetView());
   }
 
-  /**
-   * @param {Object} updatedTask это элемент мока, который нужно обновить
-   */
   _handleTaskChange(updatedTask) {
     this._boardTasks = updateItem(this._boardTasks, updatedTask);
     this._sourcedBoardTasks = updateItem(this._sourcedBoardTasks, updatedTask);
@@ -81,21 +76,17 @@ export default class Board {
   }
 
   _handleSortTypeChange(sortType) {
-    // - Сортируем задачи
     if (this._currentSortType === sortType) {
       return;
     }
 
     this._sortTasks(sortType);
-    // - Очищаем список
-    // - Рендерим список заново
     this._clearTaskList();
     this._renderTaskList();
   }
 
   _renderSort() {
     render(this._boardComponent, this._sortComponent, RenderPosition.AFTERBEGIN);
-
     this._sortComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
   }
 
@@ -106,11 +97,13 @@ export default class Board {
   }
 
   _renderTasks(from, to) {
-    // Метод для рендеринга N-задач за раз
+    this._boardTasks
+      .slice(from, to)
+      .forEach((boardTask) => this._renderTask(boardTask));
   }
 
   _renderNoTasks() {
-    // Метод для рендеринга заглушки
+    render(this._boardComponent, this._noTaskComponent, RenderPosition.AFTERBEGIN);
   }
 
   _handleLoadMoreButtonClick() {
@@ -129,7 +122,9 @@ export default class Board {
   }
 
   _clearTaskList() {
-    Object.values(this._taskPresenter).forEach((presenter) => presenter.destroy());
+    Object
+      .values(this._taskPresenter)
+      .forEach((presenter) => presenter.destroy());
     this._taskPresenter = {};
     this._renderedTaskCount = TASK_COUNT_PER_STEP;
   }
@@ -143,9 +138,6 @@ export default class Board {
   }
 
   _renderBoard() {
-    // Метод для инициализации (начала работы) модуля,
-    // бОльшая часть текущей функции renderBoard в main.js
-
     if (this._boardTasks.every((task) => task.isArchive)) {
       this._renderNoTasks();
       return;
