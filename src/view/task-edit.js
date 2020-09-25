@@ -1,5 +1,5 @@
 import {COLORS} from "../const";
-import {isTaskExpired, isTaskRepeating, humanizeTaskDueDate} from "../utils/task.js";
+import {isTaskRepeating, humanizeTaskDueDate} from "../utils/task.js";
 import SmartView from "./smart.js";
 import flatpickr from "flatpickr";
 
@@ -83,9 +83,6 @@ const createTaskEditDateTemplate = (dueDate, isDueDate) => {
 const createTaskEditTemplate = (data = {}) => {
   const {color, description, dueDate, repeating, isDueDate, isRepeating} = data;
 
-  const deadlineClassName = isTaskExpired(dueDate)
-    ? `card--deadline`
-    : ``;
   const dateTemplate = createTaskEditDateTemplate(dueDate, isDueDate);
 
   const repeatingClassName = isRepeating
@@ -94,10 +91,10 @@ const createTaskEditTemplate = (data = {}) => {
 
   const repeatingTemplate = createTaskEditRepeatingTemplate(repeating, isRepeating);
 
-  const isSubmitDisabled = isRepeating && !isTaskRepeating(repeating);
+  const isSubmitDisabled = (isDueDate && dueDate === null) || (isRepeating && !isTaskRepeating(repeating));
 
   return (
-    `<article class="card card--edit card--${color} ${deadlineClassName} ${repeatingClassName}">
+    `<article class="card card--edit card--${color} ${repeatingClassName}">
             <form class="card__form" method="get">
               <div class="card__inner">
                 <div class="card__color-bar">
@@ -146,7 +143,7 @@ export default class TaskEdit extends SmartView {
   constructor(task = BLANK_TASK) {
     super();
     this._data = TaskEdit.parseTaskToData(task);
-    this._flatpickr = null;
+    this._datepicker = null;
 
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
     this._dueDateToggleHandler = this._dueDateToggleHandler.bind(this);
@@ -157,6 +154,7 @@ export default class TaskEdit extends SmartView {
     this._colorChangeHandler = this._colorChangeHandler.bind(this);
 
     this._setInnerHandlers();
+    this._setDatepicker();
   }
 
   reset(task) {
@@ -167,6 +165,12 @@ export default class TaskEdit extends SmartView {
 
   getTemplate() {
     return createTaskEditTemplate(this._data);
+  }
+
+  restoreHandlers() {
+    this._setInnerHandlers();
+    this._setDatepicker();
+    this.setFormSubmitHandler(this._callback.formSubmit);
   }
 
   _setDatepicker() {
