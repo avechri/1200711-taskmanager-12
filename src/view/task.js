@@ -1,11 +1,11 @@
-import {isTaskExpired, isTaskRepeating, humanizeTaskDueDate} from "../utils/task.js";
+import {isTaskExpired, isTaskRepeating, formatTaskDueDate} from "../utils/task.js";
 import AbstractView from "./abstract";
 
 const createTaskTemplate = (task) => {
   const {color, description, dueDate, repeating, isArchive, isFavorite} = task;
 
   const date = dueDate !== null
-    ? humanizeTaskDueDate(dueDate)
+    ? formatTaskDueDate(dueDate)
     : ``;
 
   const deadlineClassName = isTaskExpired(dueDate)
