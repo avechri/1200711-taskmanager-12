@@ -78,10 +78,12 @@ export default class Board {
         this._taskPresenter[data.id].init(data);
         break;
       case UpdateType.MINOR:
-        // - обновить список (например, когда задача ушла в архив)
+        this._clearBoard();
+        this._renderBoard();
         break;
       case UpdateType.MAJOR:
-        // - обновить всю доску (например, при переключении фильтра)
+        this._clearBoard({resetRenderedTaskCount: true, resetSortType: true});
+        this._renderBoard();
         break;
     }
   }
@@ -92,8 +94,8 @@ export default class Board {
     }
 
     this._currentSortType = sortType;
-    this._clearTaskList();
-    this._renderTaskList();
+    this._clearBoard({resetRenderedTaskCount: true});
+    this._renderBoard();
   }
 
   _renderSort() {
@@ -151,6 +153,30 @@ export default class Board {
     this._renderedTaskCount = TASK_COUNT_PER_STEP;
   }
 
+  _clearBoard({resetRenderedTaskCount = false, resetSortType = false} = {}) {
+    const taskCount = this._getTasks().length;
+
+    Object.values(this._taskPresenter).forEach((presenter) => presenter.destroy());
+    this._taskPresenter = {};
+
+    remove(this._sortComponent);
+    remove(this._noTaskComponent);
+    remove(this._loadMoreButtonComponent);
+
+    if (resetRenderedTaskCount) {
+      this._renderedTaskCount = TASK_COUNT_PER_STEP;
+    } else {
+      // На случай, если перерисовка доски вызвана
+      // уменьшением количества задач (например, удаление или перенос в архив)
+      // нужно скорректировать число показанных задач
+      this._renderedTaskCount = Math.min(taskCount, this._renderedTaskCount);
+    }
+
+    if (resetSortType) {
+      this._currentSortType = SortType.DEFAULT;
+    }
+  }
+
   _renderTaskList() {
     const taskCount = this._getTasks().length;
     const tasks = this._getTasks().slice(0, Math.min(taskCount, TASK_COUNT_PER_STEP));
@@ -163,12 +189,24 @@ export default class Board {
   }
 
   _renderBoard() {
-    if (this._getTasks().every((task) => task.isArchive)) {
+    const tasks = this._getTasks();
+    const taskCount = tasks.length;
+
+    if (taskCount === 0) {
       this._renderNoTasks();
       return;
     }
 
     this._renderSort();
-    this._renderTaskList();
+
+    // Теперь, когда _renderBoard рендерит доску не только на старте,
+    // но и по ходу работы приложения, нужно заменить
+    // константу TASK_COUNT_PER_STEP на свойство _renderedTaskCount,
+    // чтобы в случае перерисовки сохранить N-показанных карточек
+    this._renderTasks(tasks.slice(0, Math.min(taskCount, this._renderedTaskCount)));
+
+    if (taskCount > this._renderedTaskCount) {
+      this._renderLoadMoreButton();
+    }
   }
 }
