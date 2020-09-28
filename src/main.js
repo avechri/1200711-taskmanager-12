@@ -1,7 +1,6 @@
 import {generateTask} from "./mock/task";
 import {render, RenderPosition} from "./utils/render.js";
 import SiteMenuView from "./view/site-menu.js";
-import FilterView from "./view/filter.js";
 import BoardPresenter from "./presenter/board.js";
 import FilterPresenter from "./presenter/filter.js";
 import TasksModel from "./model/tasks.js";
@@ -24,6 +23,11 @@ render(siteHeaderElement, new SiteMenuView(), RenderPosition.BEFOREEND);
 
 const boardPresenter = new BoardPresenter(siteMainElement, tasksModel, filterModel);
 const filterPresenter = new FilterPresenter(siteMainElement, filterModel, tasksModel);
+
+document.querySelector(`#control__new-task`).addEventListener(`click`, (evt) => {
+  evt.preventDefault();
+  boardPresenter.createTask();
+});
 
 filterPresenter.init();
 boardPresenter.init();
