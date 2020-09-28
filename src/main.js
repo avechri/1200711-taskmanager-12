@@ -1,7 +1,6 @@
 import SiteMenuView from "./view/site-menu.js";
 import FilterView from "./view/filter.js";
 import {generateTask} from "./mock/task";
-import {generateFilter} from "./mock/filter.js";
 import BoardPresenter from "./presenter/board.js";
 import {render, RenderPosition} from "./utils/render.js";
 import TasksModel from "./model/tasks.js";
@@ -11,7 +10,13 @@ const TASKS_COUNT = 22;
 
 
 const tasks = new Array(TASKS_COUNT).fill().map(generateTask);
-const filters = generateFilter(tasks);
+const filters = [
+  {
+    type: `all`,
+    name: `ALL`,
+    count: 0
+  }
+];
 
 const tasksModel = new TasksModel();
 tasksModel.setTasks(tasks);
