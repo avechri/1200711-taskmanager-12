@@ -1,6 +1,6 @@
 import {generateTask} from "./mock/task";
 import {render, RenderPosition} from "./utils/render.js";
-import {MenuItem} from "./const";
+import {MenuItem, FilterType, UpdateType} from "./const";
 import SiteMenuView from "./view/site-menu.js";
 import BoardPresenter from "./presenter/board.js";
 import FilterPresenter from "./presenter/filter.js";
@@ -35,18 +35,18 @@ const handleSiteMenuClick = (menuItem) => {
   switch (menuItem) {
     case MenuItem.ADD_NEW_TASK:
       // Скрыть статистику
-      // Показать доску
-      // Показать форму добавления новой задачи
-      // Убрать выделение с ADD NEW TASK после сохранения
+      boardPresenter.destroy();
+      filterModel.setFilter(UpdateType.MAJOR, FilterType.ALL);
+      boardPresenter.init();
       boardPresenter.createTask(handleTaskNewFormClose);
       siteMenuComponent.getElement().querySelector(`[value=${MenuItem.TASKS}]`).disabled = true;
       break;
     case MenuItem.TASKS:
-      // Показать доску
+      boardPresenter.init();
       // Скрыть статистику
       break;
     case MenuItem.STATISTICS:
-      // Скрыть доску
+      boardPresenter.destroy();
       // Показать статистику
       break;
   }
