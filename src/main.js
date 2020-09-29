@@ -2,10 +2,12 @@ import {generateTask} from "./mock/task";
 import {render, RenderPosition} from "./utils/render.js";
 import {MenuItem, FilterType, UpdateType} from "./const";
 import SiteMenuView from "./view/site-menu.js";
+import StatisticsView from "./view/statistic.js";
 import BoardPresenter from "./presenter/board.js";
 import FilterPresenter from "./presenter/filter.js";
 import TasksModel from "./model/tasks.js";
 import FilterModel from "./model/filter.js";
+
 
 const TASKS_COUNT = 22;
 
@@ -60,4 +62,7 @@ document.querySelector(`#control__new-task`).addEventListener(`click`, (evt) => 
 });
 
 filterPresenter.init();
-boardPresenter.init();
+// Для удобства отладки скроем доску
+// boardPresenter.init();
+// и отобразим сразу статистику
+render(siteMainElement, new StatisticsView(tasksModel.getTasks()), RenderPosition.BEFOREEND);
