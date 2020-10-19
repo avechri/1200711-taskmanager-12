@@ -1,12 +1,12 @@
-import {render, RenderPosition, remove} from "./utils/render.js";
-import {MenuItem, FilterType, UpdateType} from "./const";
 import SiteMenuView from "./view/site-menu.js";
 import StatisticsView from "./view/statistic.js";
 import BoardPresenter from "./presenter/board.js";
 import FilterPresenter from "./presenter/filter.js";
 import TasksModel from "./model/tasks.js";
 import FilterModel from "./model/filter.js";
-import Api from "./api";
+import {render, RenderPosition, remove} from "./utils/render.js";
+import {MenuItem, UpdateType, FilterType} from "./const.js";
+import Api from "./api.js";
 
 const AUTHORIZATION = `Basic hS2sd3dfSwcl1sa2j`;
 const END_POINT = `https://12.ecmascript.pages.academy/task-manager`;

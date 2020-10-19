@@ -5,11 +5,12 @@ import LoadingView from "../view/loading.js";
 import NoTaskView from "../view/no-tasks.js";
 import LoadMoreButtonView from "../view/load-more-button.js";
 import TaskPresenter from "./task.js";
-import TaskNewPresenter from "./task-new";
+import TaskNewPresenter from "./task-new.js";
 import {render, RenderPosition, remove} from "../utils/render.js";
 import {sortTaskUp, sortTaskDown} from "../utils/task.js";
+import {filter} from "../utils/filter.js";
 import {SortType, UpdateType, UserAction} from "../const.js";
-import {filter} from "../utils/filter";
+
 
 const TASK_COUNT_PER_STEP = 8;
 
@@ -37,9 +38,6 @@ export default class Board {
     this._handleModeChange = this._handleModeChange.bind(this);
     this._handleLoadMoreButtonClick = this._handleLoadMoreButtonClick.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
-
-    this._tasksModel.addObserver(this._handleModelEvent);
-    this._filterModel.addObserver(this._handleModeChange);
 
     this._taskNewPresenter = new TaskNewPresenter(this._taskListComponent, this._handleViewAction);
   }
@@ -103,18 +101,12 @@ export default class Board {
       case UserAction.DELETE_TASK:
         this._tasksModel.deleteTask(updateType, update);
         break;
-      case UpdateType.INIT:
-        this._isLoading = false;
-        remove(this._loadingComponent);
-        this._renderBoard();
-        break;
     }
   }
 
   _handleModelEvent(updateType, data) {
     switch (updateType) {
       case UpdateType.PATCH:
-        // - обновить часть списка (например, когда поменялось описание)
         this._taskPresenter[data.id].init(data);
         break;
       case UpdateType.MINOR:
@@ -123,6 +115,11 @@ export default class Board {
         break;
       case UpdateType.MAJOR:
         this._clearBoard({resetRenderedTaskCount: true, resetSortType: true});
+        this._renderBoard();
+        break;
+      case UpdateType.INIT:
+        this._isLoading = false;
+        remove(this._loadingComponent);
         this._renderBoard();
         break;
     }
@@ -145,6 +142,7 @@ export default class Board {
 
     this._sortComponent = new SortView(this._currentSortType);
     this._sortComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
+
     render(this._boardComponent, this._sortComponent, RenderPosition.AFTERBEGIN);
   }
 
@@ -183,6 +181,7 @@ export default class Board {
     if (this._loadMoreButtonComponent !== null) {
       this._loadMoreButtonComponent = null;
     }
+
     this._loadMoreButtonComponent = new LoadMoreButtonView();
     this._loadMoreButtonComponent.setClickHandler(this._handleLoadMoreButtonClick);
 
@@ -193,12 +192,14 @@ export default class Board {
     const taskCount = this._getTasks().length;
 
     this._taskNewPresenter.destroy();
-    Object.values(this._taskPresenter).forEach((presenter) => presenter.destroy());
+    Object
+      .values(this._taskPresenter)
+      .forEach((presenter) => presenter.destroy());
     this._taskPresenter = {};
 
     remove(this._sortComponent);
-    remove(this._loadingComponent);
     remove(this._noTaskComponent);
+    remove(this._loadingComponent);
     remove(this._loadMoreButtonComponent);
 
     if (resetRenderedTaskCount) {
